@@ -1,0 +1,14 @@
+{% extends "layout.html"%}
+{% block content %}
+<head>
+<h2 align="center">Welcome to the online Python2.7 Interpreter!!!</h2>
+<h3 align="center">Please Enter the code in the textbox below</h3>
+</head>
+<form action="{{url_for('copy')}}" method="post">
+    <h3>textarea:</h3>
+    <textarea type="text" name="code" rows="25" cols="125"></textarea>
+    <h3>sys-arguments:</h3>
+    <textarea type="text" name="sys arg" rows="6" cols="125"></textarea>     
+     <input type="submit" value="Run">
+</form>  
+{% endblock%}
