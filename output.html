@@ -4,7 +4,11 @@
 <hr>
 <div>
     <p>
-        {{display}}
+        {%for x in display%}
+            {{x}}
+            <br>
+        {%endfor%}
+        
     </p>
 </div>
 {%endblock%}
