@@ -101,13 +101,11 @@ def copy():
     file.close()
     # os.system("python file.py > result.txt")
     s=commands.getoutput("python file.py "+str(arg))
-    print s
+    l=s.split('\n')
     # file1=open("result.txt","r")
     # display=file1.read()
     # file1.close()
-    display=s
-    print arg
-    return render_template('output.html',title="output",display=display)
+    return render_template('output.html',title="output",display=l)
 
 
 @app.route("/login",methods=['GET','POST'])
