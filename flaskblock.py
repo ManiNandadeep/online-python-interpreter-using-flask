@@ -1,16 +1,13 @@
 from flask import Flask,render_template,request,url_for,redirect,flash
 from flask_sqlalchemy import SQLAlchemy
-# from forms import RegistrationForm,LoginForm
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager,UserMixin,login_user,current_user,logout_user
-# import os
 import commands
 
 from flask_wtf import FlaskForm
 from wtforms import StringField,PasswordField,SubmitField
 #,BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo,ValidationError
-# from flaskblock import User
 
 app=Flask(__name__)
 app.config['SECRET_KEY']='91da80d1e75c6638528ddb0bfe6c0596'
@@ -44,13 +41,11 @@ class RegistrationForm(FlaskForm):
     submit=SubmitField('SignUp')  
 
     def validate_username(self,username):
-        client=User.query.filter_by(username=username.data).first()
-        if client :
+        if  User.query.filter_by(username=username.data).first():
             raise ValidationError('That username is taken.Please choose a different one.')                 
 
     def validate_email(self,email):
-        client=User.query.filter_by(email=email.data).first()
-        if client :
+        if User.query.filter_by(email=email.data).first():
             raise ValidationError('That email is taken.Please choose a different account one.')
 
 class LoginForm(FlaskForm):
@@ -63,8 +58,8 @@ class LoginForm(FlaskForm):
 @app.route("/",methods=["POST","GET"])
 @app.route("/register",methods=["POST","GET"])
 def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
+    # if current_user.is_authenticated:
+    #     return redirect(url_for('home'))
     form=RegistrationForm()
     if request.method == 'POST':
         username = request.form.get('username')
@@ -99,33 +94,31 @@ def copy():
     file = open("file.py","w+")
     file.write(code)
     file.close()
-    # os.system("python file.py > result.txt")
     s=commands.getoutput("python file.py "+str(arg))
     l=s.split('\n')
-    # file1=open("result.txt","r")
-    # display=file1.read()
-    # file1.close()
     return render_template('output.html',title="output",display=l)
 
 
 @app.route("/login",methods=['GET','POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
+    # if current_user.is_authenticated:
+    #     return redirect(url_for('home'))
     form=LoginForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            # if form.email.data=="admin@blog.com" and form.password.data=='password':
-            #     flash('You have logged in!!','success')
-            #     return redirect(url_for('home'))
-        #else:
             user=User.query.filter_by(email=form.email.data).first()    
             if user and bcrypt.check_password_hash(user.password,form.password.data):
+                flash('You have logged in!!','success')
                 login_user(user)
                 return redirect(url_for('home'))
         else:
             flash('Unsuccessful Login.Please check your email and password','danger')
     return render_template('login.html',title='Login',form=form)
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('register'))
 
 if __name__=="__main__":
     db.create_all()
